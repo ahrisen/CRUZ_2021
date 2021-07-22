@@ -1,0 +1,101 @@
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(emmeans)
+library(multcomp)
+library(lme4)
+library(latex2exp)
+library(tidyr)
+
+setwd("C:/Users/cruzn/OneDrive/Documents/MOLECULAR AND CELLULAR TOX/DATA")
+scratch.data.pre <- read_excel('PREEXPOSURE_72.xlsx', sheet = 2) %>%
+  filter(!is.na(Percent_Closed))
+head(scratch.data.pre, N= 5)
+
+ctrl <- scratch.data.pre[1:56,]
+UN01 <- scratch.data.pre[57:98,]
+UN1 <- scratch.data.pre[99:154,]
+UN10 <- scratch.data.pre[197:238,]
+UN100 <- scratch.data.pre[155:196,]
+
+scratch.data <- rbind(ctrl, UN01, UN1, UN10, UN100)
+scratch.data <- scratch.data[!(scratch.data$Time_Point==0),]
+scratch.data$TX <- factor(scratch.data$TX)
+
+ggplot(scratch.data, aes(x = Time_Point, y = Percent_Closed)) +
+  geom_point(aes(color = TX), position =position_dodge(width = 1))
+
+model.1 <- lm(Percent_Closed ~ TX + log(Time_Point), data = scratch.data)
+summary(model.1)
+plot(cooks.distance(model.1))
+model1.1 <- lm(Percent_Closed ~ TX*log(Time_Point), data = scratch.data)
+anova(model.1, model1.1)
+summary(model1.1)
+plot(cooks.distance(model1.1))
+anova(model1.1)
+AIC(model.1)
+AIC(model1.1)
+plot(model1.1)
+plot(cooks.distance(model1.1))
+
+##
+
+predict.scratch <- data.frame(
+  predict(model1.1, interval = 'confidence')
+)
+
+scratch.data <- scratch.data %>%
+  mutate(
+    fit = predict.scratch$fit,
+    upr = predict.scratch$upr,
+    lwr = predict.scratch$lwr
+  )
+
+
+ggplot(scratch.data, aes(x = log(Time_Point))) +
+  geom_point(aes(y = Percent_Closed, color = TX)) +
+  geom_line(aes(y = fit, color = TX), size = 1) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(title = "Early Percent Closure Inhibited By UN") +
+  labs(y = "Percent Closed") +
+  labs(x = "Ln(Hours After Scratch)")+
+  theme(plot.title = element_text(size = 16, face = "bold")) +
+  theme(axis.title.y = element_text(size = 14, face = "bold")) +
+  theme(axis.title.x = element_text(size = 14, face = "bold")) +
+  theme(axis.text.x = element_text(size = 12, color = "black")) +
+  theme(axis.text.y = element_text(size = 12, color = "black")) 
+
+stats.PC <- scratch.data %>% 
+  group_by(TX, Time_Point) %>%
+  summarise(
+    means = mean(Percent_Closed),
+    stderr = sd(Percent_Closed)/sqrt(n())) %>%
+  mutate(
+    lwr.err = means - stderr,
+    upr.err = means + stderr)
+
+ggplot(stats.PC, aes(x = log(Time_Point), shape = TX), show.legend = F) + 
+  theme_bw() +
+  geom_point(aes(y = means), size = 2.5, position =position_dodge(width = 0.1), show.legend = T) +
+  geom_line(data = scratch.data, mapping = aes(y = fit, linetype = TX, color = TX), size = 1, show.legend = T) +
+  geom_errorbar(data = stats.PC, aes(ymin=lwr.err, ymax=upr.err), width=0.1, position =position_dodge(width = 0.1), show.legend = F, size = 0.1) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  scale_x_continuous(breaks = seq(log(4), log(24), length = 7)) +
+  labs(title = "Early Percent Closure Inhibited By UN") +
+  labs(y = "Percent Closed") +
+  labs(x = "Ln(Hours Post-Scratch)") +
+  theme(plot.title = element_text(size = 18, face = "bold")) +
+  theme(axis.title.y = element_text(size = 16, face = "bold")) +
+  theme(axis.title.x = element_text(size = 16, face = "bold")) +
+  theme(axis.text.x = element_text(size = 10, color = "black")) +
+  theme(axis.text.y = element_text(size = 10, color = "black"))
+
+for( hour in seq(4, 24, by = 4)){
+print(emmeans(model1.1,  pairwise ~ TX, 
+              at = list(Time_Point = hour))$contrasts)
+} 
+
+
+
+
+
