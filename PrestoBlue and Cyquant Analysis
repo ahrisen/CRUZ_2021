@@ -1,0 +1,432 @@
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(emmeans)
+library(multcomp)
+library(lme4)
+library(latex2exp)
+library(tidyr)
+library(car)
+
+setwd("C:/Users/cruzn/OneDrive/Documents/MOLECULAR AND CELLULAR TOX/DATA")
+PB24.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 1) 
+ctrl24 <- PB24.data[1:36,]
+UN10024 <- PB24.data[145:180,]
+UN0124 <- PB24.data[181:216,]
+UN1024 <- PB24.data[217:252,]
+UN124 <- PB24.data[253:288,]
+PB24.data <- rbind(ctrl24, UN0124, UN124, UN1024, UN10024)
+PB24.data$TX <- factor(PB24.data$TX)
+
+PB24.stats <- PB24.data %>%
+  group_by(TX) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+model1 <- lmer(STANDARD ~ TX + (1|PLATE), data = PB24.data)
+summary(model1)
+plot(model1)
+
+letterdata.24 <- emmeans(model1, ~ TX) %>%
+  cld(Letters = letters, reverse = T) %>%
+  mutate(y = 110)
+
+letter24 <- as.data.frame(emmeans(model1, ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 110))
+
+ggplot(PB24.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Metabolic Activity (%)') +
+  labs(title = "(A) 24 Hour Metabolic Activity Of hDFn Culture in UN") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=16)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 2) +
+  annotate("text", x = 2.7, y = 100, label = "MCL", color = "red") +
+  geom_text(letterdata.24, mapping = aes(x = TX, y = y, label = .group), size = 7) 
+
+##48 PB
+PB48.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 2) 
+ctrl48 <- PB48.data[1:36,]
+UN10048 <- PB48.data[145:180,]
+UN0148 <- PB48.data[181:216,]
+UN1048 <- PB48.data[217:252,]
+UN148 <- PB48.data[253:288,]
+PB48.data <- rbind(ctrl48, UN0148, UN148, UN1048, UN10048)
+PB48.data$TX <- factor(PB48.data$TX)
+
+PB48.stats <- PB48.data %>%
+  group_by(TX) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+model2 <- lmer(STANDARD ~ TX + (1|PLATE), data = PB48.data)
+summary(model2)
+plot(model2)
+
+letterdata.48 <- emmeans(model2, ~ TX) %>%
+  cld(Letters = letters, reverse = T) %>%
+  mutate(y = 115)
+
+letter48 <- as.data.frame(emmeans(model2, ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 115))
+
+ggplot(PB48.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Metabolic Activity (%)') +
+  labs(title = "(B) 48 Hour Metabolic Activity Of hDFn Culture in UN") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=16)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 2) +
+  annotate("text", x = 2.7, y = 100, label = "MCL", color = "red") +
+  geom_text(letterdata.48, mapping = aes(x = TX, y = y, label = .group), size = 7) 
+
+#72 PB
+PB72.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 3) 
+ctrl72 <- PB72.data[1:36,]
+UN10072 <- PB72.data[145:180,]
+UN0172 <- PB72.data[181:216,]
+UN1072 <- PB72.data[217:252,]
+UN172 <- PB72.data[253:288,]
+PB72.data <- rbind(ctrl72, UN0172, UN172, UN1072, UN10072)
+PB72.data$TX <- factor(PB72.data$TX)
+
+PB72.stats <- PB72.data %>%
+  group_by(TX) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+model3 <- lmer(STANDARD ~ TX + (1|PLATE), data = PB72.data)
+summary(model3)
+plot(model3)
+
+letterdata.72 <- emmeans(model3, ~ TX) %>%
+  cld(Letters = letters, reverse = T) %>%
+  mutate(y = 110)
+
+letter72 <- as.data.frame(emmeans(model3, ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 110))
+
+ggplot(PB72.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Metabolic Activity (%)') +
+  labs(title = "(C) 72 Hour Metabolic Activity Of hDFn Culture in UN") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=16)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 2) +
+  annotate("text", x = 2.7, y = 100, label = "MCL", color = "red") +
+  geom_text(letterdata.72, mapping = aes(x = TX, y = y, label = .group), size = 7) 
+
+## COMBINING ALL THREE PB
+##
+tot.PB <- rbind(PB24.data, PB48.data, PB72.data)
+
+totPB.stats <- tot.PB %>%
+  group_by(TX, HOUR) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+cld_data <- rbind(letter24, letter48, letter72)
+cld_data <- cld_data %>%
+  mutate(
+    HOUR = c(rep(24,5), rep(48,5), rep(72,5))
+  )
+
+ggplot(totPB.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg, fill = HOUR), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  facet_grid(~HOUR) +
+  theme(strip.text.x = element_text(size = 12, color = "white", face = "bold")) +
+  theme(strip.background = element_rect(fill = "black"))  +
+  geom_text(data = cld_data, aes(y = 112, label = .group)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 1) +
+  annotate("text", x = 2.85, y = 100, label = "MCL", color = "red", size = 3) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Metabolic Activity (%)') +
+  labs(title = "Metabolic Activity of 24-, 48-, and 72-Hour Exposed hDFn Culture") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=14))
+  
+##
+##
+##CQ 24
+setwd("C:/Users/cruzn/OneDrive/Documents/MOLECULAR AND CELLULAR TOX/DATA")
+CQ24.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 4) 
+ctrl24 <- CQ24.data[1:36,]
+UN10024 <- CQ24.data[145:180,]
+UN0124 <- CQ24.data[181:216,]
+UN1024 <- CQ24.data[217:252,]
+UN124 <- CQ24.data[253:288,]
+CQ24.data <- rbind(ctrl24, UN0124, UN124, UN1024, UN10024)
+CQ24.data$TX <- factor(CQ24.data$TX)
+
+CQ24.stats <- CQ24.data %>%
+  group_by(TX) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+model1 <- lmer(STANDARD ~ TX + (1|PLATE), data = CQ24.data)
+summary(model1)
+plot(model1)
+
+letterdata.24 <- emmeans(model1, ~ TX) %>%
+  cld(Letters = letters, reverse = T) %>%
+  mutate(y = 110)
+
+letter24 <- as.data.frame(emmeans(model1, ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 110))
+
+ggplot(CQ24.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Viable Cell Count (%)') +
+  labs(title = "(A) 24 Hour viable Cell Count Of hDFn Culture in UN") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=16)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 2) +
+  annotate("text", x = 2.7, y = 100, label = "MCL", color = "red") +
+  geom_text(letterdata.24, mapping = aes(x = TX, y = y, label = .group), size = 7) 
+
+##48 CQ
+CQ48.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 5) 
+ctrl48 <- CQ48.data[1:36,]
+UN10048 <- CQ48.data[145:180,]
+UN0148 <- CQ48.data[181:216,]
+UN1048 <- CQ48.data[217:252,]
+UN148 <- CQ48.data[253:288,]
+CQ48.data <- rbind(ctrl48, UN0148, UN148, UN1048, UN10048)
+CQ48.data$TX <- factor(CQ48.data$TX)
+
+CQ48.stats <- CQ48.data %>%
+  group_by(TX) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+model2 <- lmer(STANDARD ~ TX + (1|PLATE), data = CQ48.data)
+summary(model2)
+plot(model2)
+
+letterdata.48 <- emmeans(model2, ~ TX) %>%
+  cld(Letters = letters, reverse = T) %>%
+  mutate(y = 115)
+
+letter48 <- as.data.frame(emmeans(model2, ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 115))
+
+ggplot(CQ48.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Viable Cell Count (%)') +
+  labs(title = "(B) 48 Hour Viable Cell Count Of hDFn Culture in UN") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=16)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 2) +
+  annotate("text", x = 2.7, y = 100, label = "MCL", color = "red") +
+  geom_text(letterdata.48, mapping = aes(x = TX, y = y, label = .group), size = 7) 
+
+#72 PB
+CQ72.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 6) 
+ctrl72 <- CQ72.data[1:36,]
+UN10072 <- CQ72.data[145:180,]
+UN0172 <- CQ72.data[181:216,]
+UN1072 <- CQ72.data[217:252,]
+UN172 <- CQ72.data[253:288,]
+CQ72.data <- rbind(ctrl72, UN0172, UN172, UN1072, UN10072)
+CQ72.data$TX <- factor(CQ72.data$TX)
+
+CQ72.stats <- PB72.data %>%
+  group_by(TX) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+model3 <- lmer(STANDARD ~ TX + (1|PLATE), data = CQ72.data)
+summary(model3)
+plot(model3)
+
+letterdata.72 <- emmeans(model3, ~ TX) %>%
+  cld(Letters = letters, reverse = T) %>%
+  mutate(y = 110)
+
+letter72 <- as.data.frame(emmeans(model3, ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 110))
+
+ggplot(CQ72.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative viable Cell Count (%)') +
+  labs(title = "(C) 72 Hour Viable Cell Count Of hDFn Culture in UN") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=16)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 2) +
+  annotate("text", x = 2.7, y = 100, label = "MCL", color = "red") +
+  geom_text(letterdata.72, mapping = aes(x = TX, y = y, label = .group), size = 7) 
+
+## COMBINING ALL THREE CQ
+##
+tot.CQ <- rbind(CQ24.data, CQ48.data, CQ72.data)
+
+totCQ.stats <- tot.CQ %>%
+  group_by(TX, HOUR) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
+  mutate(
+    upr = avg + sterr,
+    lwr = avg - sterr
+  )
+
+cld_data <- rbind(letter24, letter48, letter72)
+cld_data <- cld_data %>%
+  mutate(
+    HOUR = c(rep(24,5), rep(48,5), rep(72,5))
+  )
+
+ggplot(totCQ.stats, mapping = aes(x = TX)) +
+  theme_bw() +
+  geom_bar(aes(y = avg, fill = HOUR), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  facet_grid(~HOUR) +
+  theme(strip.text.x = element_text(size = 12, color = "white", face = "bold")) +
+  theme(strip.background = element_rect(fill = "black"))  +
+  geom_text(data = cld_data, aes(y = 112, label = .group)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 1) +
+  annotate("text", x = 2.85, y = 100, label = "MCL", color = "red", size = 3) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Viable Cell Count (%)') +
+  labs(title = "Viable Cell Count of 24-, 48-, and 72-Hour Exposed hDFn Culture") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=14))
+
+
+#CORRELATION OF PB AND CQ
+
+corrPB <- tot.PB[,-c(2,3,6,7,8)]
+colnames(corrPB) <- c("TX", "RFUPB", "Hour")
+
+corrCQ <- tot.CQ$RFU
+
+corrPBCQ <- corrPB %>%
+  mutate(
+    RFUCQ = corrCQ
+  )
+corrPBCQ$Hour <- factor(corrPBCQ$Hour)
+
+ggplot(corrPBCQ, mapping = aes(x = RFUCQ, y = RFUPB)) +
+  geom_point(aes(color = Hour)) +
+  facet_grid(~TX)
+
+model01 <- lm(RFUPB ~ RFUCQ + TX + Hour, data = corrPBCQ)
+anova(model01)
+model02 <- lm(RFUPB ~ RFUCQ + Hour, data = corrPBCQ)
+anova(model02)
+anova(model01, model02)
+summary(model02)
+
+predict.corrPBCQ <- data.frame(
+  predict(model02, interval = 'confidence')
+)
+
+PBCQcorr <- corrPBCQ %>%
+  mutate(
+    fit = predict.corrPBCQ$fit,
+    upr = predict.corrPBCQ$upr,
+    lwr = predict.corrPBCQ$lwr
+  )
+
+ggplot(PBCQcorr, aes(x = RFUCQ, y = RFUPB), show.legend = F) +
+  theme_bw() +
+  geom_point(aes(color = Hour)) +
+  geom_line(mapping = aes(y = fit, linetype = TX, color = TX), size = 1, show.legend = T) +
+  facet_wrap(~TX)
+
+
+
+  
