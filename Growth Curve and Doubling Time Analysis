@@ -1,0 +1,154 @@
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(emmeans)
+library(multcomp)
+library(lme4)
+library(latex2exp)
+library(tidyr)
+
+###
+
+###
+
+setwd("C:/Users/cruzn/OneDrive/Documents/MOLECULAR AND CELLULAR TOX/DATA")
+
+GC.data <- read_excel('GC_DATA.xlsx', sheet = 1) %>%
+  filter(!is.na(count))
+GC.data$tx <- factor(GC.data$tx)
+head(GC.data, N= 5)
+
+model1 <- lm(estimate ~ hour + tx, data = GC.data)
+summary(model1)
+model1.1 <- lm(log(estimate) ~ log(hour) + tx, data = GC.data)
+summary(model1.1)
+plot(cooks.distance(model1.1))
+plot(model1.1)
+
+predict.GC <- data.frame(
+  predict(model1.1, interval = 'confidence')
+)
+
+GC.data <- GC.data %>%
+  mutate(
+    fit = predict.GC$fit,
+    upr = predict.GC$upr,
+    lwr = predict.GC$lwr
+  )
+GC.data <- GC.data %>%
+  mutate(
+    log.est = log(estimate)
+  )
+stats.GC <- GC.data %>% 
+  group_by(tx, hour) %>%
+  summarise(
+    means = mean(log.est),
+    stderr = sd(log.est)/sqrt(n())) %>%
+  mutate(
+    lwr.err = means - stderr,
+    upr.err = means + stderr)
+
+ggplot(stats.GC, aes(x = log(hour), shape = tx), show.legend = F) +
+  theme_bw() +
+  geom_point(aes(y = means), size = 5, position = position_dodge(width = 0.05), show.legend = T) +
+  geom_line(data = GC.data, mapping = aes(y = fit, linetype = tx, color = tx), size = 2, show.legend = T) +
+  geom_errorbar(data = stats.GC, aes(ymin = lwr.err, ymax = upr.err), width = 0.2, position = position_dodge(width = 0.05), size = 1, show.legend = F) +
+  scale_y_continuous(breaks = seq(8, 12, by = .5)) +
+  scale_x_continuous(breaks = seq(log(24), log(144), length=6)) +
+  labs(title = "Cell Estimate Reduced By UN") +
+  labs(y = "Ln(Cell Estimate)") +
+  labs(x = "Ln(Hours of Growth)") +
+  theme(plot.title = element_text(size = 28, face = "bold")) +
+  theme(axis.title.y = element_text(size = 22, face = "bold")) +
+  theme(axis.title.x = element_text(size = 22, face = "bold")) +
+  theme(axis.text.x = element_text(size = 20, color = "black")) +
+  theme(axis.text.y = element_text(size = 20, color = "black")) +
+  annotate("segment", x = 3.14, xend = 3.14, y = 7.98, yend = 8.55, colour = "red", size = 2, alpha = 0.75) +
+  annotate("text",
+           x = 3.00,
+           y = 8.25,
+           label = "55% Decrease", size = 5, fontface = 2) +
+  theme(legend.text=element_text(size=18),
+        legend.title = element_text(size = 22, face = "bold")) +
+  expand_limits(x = 2.9)
+
+#Population Doubling Level (PDL)
+
+GC.data.PDL <- GC.data %>%
+  mutate(
+    PDL = 3.32*(log(estimate/5000, base=10)) #n = cell number and denominator = number of cells seeded Kuo_2020
+  )
+
+ggplot(GC.data.PDL, aes(x = hour, y = PDL)) +
+  geom_point(aes(color = tx))
+
+modelpdl1 <- lm(PDL ~ hour + tx, data = GC.data.PDL)
+anova(modelpdl1)
+summary(modelpdl1)
+plot(modelpdl1)
+modelpdl2 <- lm(PDL ~ hour*tx, data = GC.data.PDL)
+anova(modelpdl2) #no interaction
+modelpdl3 <- lm(PDL ~ log(hour) + tx, data = GC.data.PDL)
+anova(modelpdl3)
+summary(modelpdl3)
+plot(modelpdl3)
+AIC(modelpdl3)
+modelpdl4 <- lm(PDL ~ poly(hour,2) + tx, data = GC.data.PDL)
+AIC(modelpdl4)
+anova(modelpdl4)
+summary(modelpdl4)
+
+predict.pdl <- data.frame(
+  predict(modelpdl4, interval = 'confidence')
+)
+
+GC.pdl <- GC.data.PDL %>%
+  mutate(
+    fit = predict.pdl$fit,
+    upr = predict.pdl$upr,
+    lwr = predict.pdl$lwr
+  )
+
+ggplot(GC.pdl, aes(x = hour, y = PDL), show.legend = F) +
+  theme_bw() +
+  geom_point(aes(y = PDL), size = 2.5, position = position_dodge(width = 0.05), show.legend = T) +
+  geom_line(data = GC.pdl, mapping = aes(y = fit, linetype = tx, color = tx), size = 2, show.legend = T)
+
+
+stats.pdl <- GC.pdl %>% 
+  group_by(tx, hour) %>%
+  summarise(
+    means = mean(PDL),
+    stderr = sd(PDL)/sqrt(n())) %>%
+  mutate(
+    lwr.err = means - stderr,
+    upr.err = means + stderr)
+
+ggplot(stats.pdl, aes(x = hour, shape = tx), show.legend = F) +
+  theme_bw() +
+  geom_point(aes(y = means), size = 5, position = position_dodge(width = 5), show.legend = T) +
+  geom_line(data = GC.pdl, mapping = aes(y = fit, linetype = tx, color = tx), size = 2, show.legend = T) +
+  geom_errorbar(data = stats.pdl, aes(ymin = lwr.err, ymax = upr.err), width = 7, position = position_dodge(width = 5), size = 1.5, show.legend = F) +
+  scale_y_continuous(breaks = seq(0, 6, by = 0.5)) +
+  scale_x_continuous(breaks = seq(24, 144, by = 24)) +
+  labs(title = "Population Doublings of hDFn Exposed to UN") +
+  labs(y = "Number of Population Doublings (PD)") +
+  labs(x = "Hours of Growth") +
+  theme(plot.title = element_text(size = 28, face = "bold")) +
+  theme(axis.title.y = element_text(size = 22, face = "bold")) +
+  theme(axis.title.x = element_text(size = 22, face = "bold")) +
+  theme(axis.text.x = element_text(size = 20, color = "black")) +
+  theme(axis.text.y = element_text(size = 20, color = "black")) + 
+  annotate("segment", x = 21.5, xend = 21.5, y = -0.65, yend = .15, colour = "red", size = 2, alpha = 0.75) + 
+  annotate("text",
+           x = 11,
+           y = -0.25,
+           label = "0.8 PD Difference", size = 5, fontface = 2) +
+  theme(legend.text=element_text(size=18),
+        legend.title = element_text(size = 22, face = "bold")) +
+  expand_limits(x = 7)
+
+for( hour in seq(24, 144, by = 24)){
+    print(emmeans(modelpdl1,  pairwise ~ tx, 
+                  at = list(hour = hour))$contrasts)
+} 
