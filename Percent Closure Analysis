@@ -24,13 +24,21 @@ scratch.data$TX <- factor(scratch.data$TX)
 
 ggplot(scratch.data, aes(x = Time_Point, y = Percent_Closed)) +
   geom_point(aes(color = TX), position =position_dodge(width = 1))
-
+madd <- lm(Percent_Closed ~ TX+Time_Point, data = scratch.data)
+anova(madd)
+m <- lm(Percent_Closed ~ TX*Time_Point, data = scratch.data)
+anova(m)
+summary(m)
+plot(m)
+AIC(m)
 model.1 <- lm(Percent_Closed ~ TX + log(Time_Point), data = scratch.data)
 summary(model.1)
+anova(model.1)
 plot(cooks.distance(model.1))
 model1.1 <- lm(Percent_Closed ~ TX*log(Time_Point), data = scratch.data)
-anova(model.1, model1.1)
+anova(model1.1)
 summary(model1.1)
+confint(model1.1)
 plot(cooks.distance(model1.1))
 anova(model1.1)
 AIC(model.1)
@@ -96,6 +104,9 @@ print(emmeans(model1.1,  pairwise ~ TX,
 } 
 
 
-
+for( hour in seq(4, 24, by = 4)){
+  print(confint(emmeans(model1.1,  pairwise ~ TX, 
+                at = list(Time_Point = hour))$contrasts))
+} 
 
 
