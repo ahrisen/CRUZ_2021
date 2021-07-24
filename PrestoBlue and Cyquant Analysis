@@ -32,6 +32,7 @@ PB24.stats <- PB24.data %>%
 model1 <- lmer(STANDARD ~ TX + (1|PLATE), data = PB24.data)
 summary(model1)
 plot(model1)
+confint(model1)
 
 letterdata.24 <- emmeans(model1, ~ TX) %>%
   cld(Letters = letters, reverse = T) %>%
@@ -81,6 +82,7 @@ PB48.stats <- PB48.data %>%
 model2 <- lmer(STANDARD ~ TX + (1|PLATE), data = PB48.data)
 summary(model2)
 plot(model2)
+confint(model2)
 
 letterdata.48 <- emmeans(model2, ~ TX) %>%
   cld(Letters = letters, reverse = T) %>%
@@ -129,6 +131,7 @@ PB72.stats <- PB72.data %>%
 
 model3 <- lmer(STANDARD ~ TX + (1|PLATE), data = PB72.data)
 summary(model3)
+confint(model3)
 plot(model3)
 
 letterdata.72 <- emmeans(model3, ~ TX) %>%
@@ -221,6 +224,7 @@ CQ24.stats <- CQ24.data %>%
 
 model1 <- lmer(STANDARD ~ TX + (1|PLATE), data = CQ24.data)
 summary(model1)
+confint(model1)
 plot(model1)
 
 letterdata.24 <- emmeans(model1, ~ TX) %>%
@@ -270,6 +274,7 @@ CQ48.stats <- CQ48.data %>%
 
 model2 <- lmer(STANDARD ~ TX + (1|PLATE), data = CQ48.data)
 summary(model2)
+confint(model2)
 plot(model2)
 
 letterdata.48 <- emmeans(model2, ~ TX) %>%
@@ -319,6 +324,7 @@ CQ72.stats <- PB72.data %>%
 
 model3 <- lmer(STANDARD ~ TX + (1|PLATE), data = CQ72.data)
 summary(model3)
+confint(model3)
 plot(model3)
 
 letterdata.72 <- emmeans(model3, ~ TX) %>%
@@ -385,48 +391,103 @@ ggplot(totCQ.stats, mapping = aes(x = TX)) +
         axis.title.y = element_text(size=14),
         title = element_text(size=14))
 
+##Ratio
 
-#CORRELATION OF PB AND CQ
+ratio.data <- read_excel('POOLED_PBCQ_DATA.xlsx', sheet = 13)
+ratio.data$TX <- factor(ratio.data$TX)
 
-corrPB <- tot.PB[,-c(2,3,6,7,8)]
-colnames(corrPB) <- c("TX", "RFUPB", "Hour")
+ctrl24 <- ratio.data[1:36,]
+UN10024 <- ratio.data[145:180,]
+UN0124 <- ratio.data[181:216,]
+UN1024 <- ratio.data[217:252,]
+UN124 <- ratio.data[253:288,]
 
-corrCQ <- tot.CQ$RFU
+ratio24 <- rbind(ctrl24, UN10024, UN0124, UN1024, UN124)
+anova(lmer(STANDARD ~ TX+ (1|PLATE), data = ratio24))
+summary(lmer(STANDARD ~ TX+ (1|PLATE), data = ratio24))
+confint(lmer(STANDARD ~ TX+ (1|PLATE), data = ratio24))
+plot(lmer(STANDARD ~ TX+ (1|PLATE), data = ratio24))
+letterratio24<- as.data.frame(emmeans(lmer(STANDARD ~ TX + (1|PLATE), data = ratio24), ~ TX) %>%
+                            cld(Letters = letters, reverse = T) %>%
+                            mutate(y = 110))
 
-corrPBCQ <- corrPB %>%
+ctrl48 <- ratio.data[289:324,]
+UN10048 <- ratio.data[433:468,]
+UN0148 <- ratio.data[469:504,]
+UN1048 <- ratio.data[505:540,]
+UN148 <- ratio.data[541:576,]
+
+ratio48 <- rbind(ctrl48, UN10048, UN0148, UN1048, UN148)
+anova(lm(STANDARD ~ TX, data = ratio48))
+summary(lmer(STANDARD ~ TX + (1|PLATE), data = ratio48))
+confint(lmer(STANDARD ~ TX + (1|PLATE), data = ratio48))
+letterratio48 <- as.data.frame(emmeans(lmer(STANDARD ~ TX + (1|PLATE), data = ratio48), ~ TX) %>%
+                                cld(Letters = letters, reverse = T) %>%
+                                mutate(y = 120))
+
+ctrl72 <- ratio.data[577:612,]
+UN10072 <- ratio.data[721:756,]
+UN0172 <- ratio.data[757:792,]
+UN1072 <- ratio.data[793:828,]
+UN172 <- ratio.data[829:864,]
+
+ratio72 <- rbind(ctrl72, UN10072, UN0172, UN1072, UN172)
+anova(lm(STANDARD ~ TX, data = ratio72))
+summary(lmer(STANDARD ~ TX + (1|PLATE), data = ratio72))
+confint(lmer(STANDARD ~ TX + (1|PLATE), data = ratio72))
+
+letterratio72 <- as.data.frame(emmeans(lmer(STANDARD ~ TX + (1|PLATE), data = ratio72), ~ TX) %>%
+                                cld(Letters = letters, reverse = F) %>%
+                                mutate(y = 120))
+
+ratio.data <- rbind(ctrl24,ctrl48,ctrl72,
+                    UN10024,UN10048,UN10072,
+                    UN0124,UN0148,UN0172,
+                    UN1024,UN1048,UN1072,
+                    UN124,UN148,UN172
+                    )
+
+ggplot(ratio.data, aes(x = TX, y = STANDARD)) +
+  geom_point(aes(color = TX)) +
+  facet_grid(~HOUR)
+
+ratiom <- lmer(STANDARD ~ TX + HOUR + (1|PLATE), data = ratio.data)
+anova(ratiom)  
+summary(ratiom)
+
+
+totratio <- ratio.data %>%
+  group_by(TX, HOUR) %>%
+  summarise(
+    avg = mean(STANDARD),
+    sterr = sd(STANDARD/sqrt(n()))
+  ) %>%
   mutate(
-    RFUCQ = corrCQ
+    upr = avg + sterr,
+    lwr = avg - sterr
   )
-corrPBCQ$Hour <- factor(corrPBCQ$Hour)
 
-ggplot(corrPBCQ, mapping = aes(x = RFUCQ, y = RFUPB)) +
-  geom_point(aes(color = Hour)) +
-  facet_grid(~TX)
-
-model01 <- lm(RFUPB ~ RFUCQ + TX + Hour, data = corrPBCQ)
-anova(model01)
-model02 <- lm(RFUPB ~ RFUCQ + Hour, data = corrPBCQ)
-anova(model02)
-anova(model01, model02)
-summary(model02)
-
-predict.corrPBCQ <- data.frame(
-  predict(model02, interval = 'confidence')
-)
-
-PBCQcorr <- corrPBCQ %>%
+cld_ratio <- rbind(letterratio24, letterratio48, letterratio72)
+cld_ratio <- cld_ratio %>%
   mutate(
-    fit = predict.corrPBCQ$fit,
-    upr = predict.corrPBCQ$upr,
-    lwr = predict.corrPBCQ$lwr
+    HOUR = c(rep(24,5), rep(48,5), rep(72,5))
   )
 
-ggplot(PBCQcorr, aes(x = RFUCQ, y = RFUPB), show.legend = F) +
+ggplot(totratio, mapping = aes(x = TX)) +
   theme_bw() +
-  geom_point(aes(color = Hour)) +
-  geom_line(mapping = aes(y = fit, linetype = TX, color = TX), size = 1, show.legend = T) +
-  facet_wrap(~TX)
-
-
-
-  
+  geom_bar(aes(y = avg, fill = HOUR), stat = 'identity', show.legend=FALSE, width = 0.6, alpha = 1) +
+  facet_grid(~HOUR) +
+  theme(strip.text.x = element_text(size = 12, color = "white", face = "bold")) +
+  theme(strip.background = element_rect(fill = "black"))  +
+  geom_text(data = cld_ratio, aes(y = 126, label = .group)) +
+  geom_vline(xintercept = 2.5, color = "red", size = 1) +
+  annotate("text", x = 2.85, y = -3, label = "MCL", color = "red", size = 3) +
+  geom_errorbar(mapping = aes(ymin = lwr, ymax = upr), width = 0.4) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(x = 'Uranyl Nitrate Treatment Concentration (uM)', y = 'Relative Metabolic Ratio (PB/CQ)') +
+  labs(title = "Metabolic Ratio of 24-, 48-, and 72-Hour Exposed hDFn Culture") +
+  theme(axis.text.x = element_text(size=12, colour = "black"),
+        axis.text.y = element_text(size=12, colour = "black"),
+        axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        title = element_text(size=14))
