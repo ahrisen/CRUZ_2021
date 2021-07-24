@@ -20,10 +20,15 @@ head(GC.data, N= 5)
 
 model1 <- lm(estimate ~ hour + tx, data = GC.data)
 summary(model1)
+AIC(model1)
 model1.1 <- lm(log(estimate) ~ log(hour) + tx, data = GC.data)
 summary(model1.1)
+AIC(model1.1)
 plot(cooks.distance(model1.1))
 plot(model1.1)
+confint(model1.1)
+mod <- lm(log(estimate) ~ log(hour)*tx, data = GC.data) #no interaction effect
+anova(mod)
 
 predict.GC <- data.frame(
   predict(model1.1, interval = 'confidence')
@@ -86,17 +91,22 @@ modelpdl1 <- lm(PDL ~ hour + tx, data = GC.data.PDL)
 anova(modelpdl1)
 summary(modelpdl1)
 plot(modelpdl1)
+AIC(modelpdl1)
 modelpdl2 <- lm(PDL ~ hour*tx, data = GC.data.PDL)
 anova(modelpdl2) #no interaction
+AIC(modelpdl2)
+summary(modelpdl2)
 modelpdl3 <- lm(PDL ~ log(hour) + tx, data = GC.data.PDL)
 anova(modelpdl3)
 summary(modelpdl3)
 plot(modelpdl3)
 AIC(modelpdl3)
-modelpdl4 <- lm(PDL ~ poly(hour,2) + tx, data = GC.data.PDL)
+modelpdl4 <- lm(PDL ~ poly(hour,4) + tx, data = GC.data.PDL)
 AIC(modelpdl4)
 anova(modelpdl4)
+plot(modelpdl4)
 summary(modelpdl4)
+confint(modelpdl4)
 
 predict.pdl <- data.frame(
   predict(modelpdl4, interval = 'confidence')
@@ -139,16 +149,14 @@ ggplot(stats.pdl, aes(x = hour, shape = tx), show.legend = F) +
   theme(axis.title.x = element_text(size = 22, face = "bold")) +
   theme(axis.text.x = element_text(size = 20, color = "black")) +
   theme(axis.text.y = element_text(size = 20, color = "black")) + 
-  annotate("segment", x = 21.5, xend = 21.5, y = -0.65, yend = .15, colour = "red", size = 2, alpha = 0.75) + 
-  annotate("text",
-           x = 11,
-           y = -0.25,
-           label = "0.8 PD Difference", size = 5, fontface = 2) +
   theme(legend.text=element_text(size=18),
         legend.title = element_text(size = 22, face = "bold")) +
-  expand_limits(x = 7)
+  expand_limits(x = 15) 
 
 for( hour in seq(24, 144, by = 24)){
-    print(emmeans(modelpdl1,  pairwise ~ tx, 
+    print(emmeans(modelpdl4,  pairwise ~ tx, 
                   at = list(hour = hour))$contrasts)
 } 
+
+predict(modelpdl4, newdata = data.frame(hour = seq(24, 144, by = 24)),
+        interval = "prediction")
