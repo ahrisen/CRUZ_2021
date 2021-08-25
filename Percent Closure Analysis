@@ -6,6 +6,7 @@ library(multcomp)
 library(lme4)
 library(latex2exp)
 library(tidyr)
+library(pwr2)
 
 setwd("C:/Users/cruzn/OneDrive/Documents/MOLECULAR AND CELLULAR TOX/DATA")
 scratch.data.pre <- read_excel('PREEXPOSURE_72.xlsx', sheet = 2) %>%
@@ -85,24 +86,26 @@ stats.PC <- scratch.data %>%
 ggplot(stats.PC, aes(x = log(Time_Point), shape = TX), show.legend = F) + 
   theme_bw() +
   scale_color_viridis(discrete = T) +
-  geom_point(aes(y = means), size = 2.5, position =position_dodge(width = 0.1), show.legend = T) +
-  geom_line(data = scratch.data, mapping = aes(y = fit, linetype = TX, color = TX), size = 1, show.legend = T) +
-  geom_errorbar(data = stats.PC, aes(ymin=lwr.err, ymax=upr.err), width=0.1, position =position_dodge(width = 0.1), show.legend = F, size = 0.1) +
+  geom_point(aes(y = means), size = 5, position =position_dodge(width = 0.1), show.legend = T) +
+  geom_line(data = scratch.data, mapping = aes(y = fit, linetype = TX, color = TX), size = 2, show.legend = T) +
+  geom_errorbar(data = stats.PC, aes(ymin=lwr.err, ymax=upr.err), width=0.2, position =position_dodge(width = 0.1), show.legend = F, size = 0.75) +
   scale_y_continuous(breaks = seq(0, 100, by = 10)) +
   scale_x_continuous(breaks = seq(log(4), log(24), length = 7)) +
-  labs(title = "Early Percent Closure Inhibited By UN") +
+  labs(title = "B) Modeling of Percent Closure") +
   labs(y = "Percent Closure") +
   labs(x = "Ln(Hours Post-Scratch)") +
-  theme(plot.title = element_text(size = 18, face = "bold")) +
-  theme(axis.title.y = element_text(size = 16, face = "bold")) +
-  theme(axis.title.x = element_text(size = 16, face = "bold")) +
-  theme(axis.text.x = element_text(size = 10, color = "black")) +
-  theme(axis.text.y = element_text(size = 10, color = "black")) +
-  annotate("segment", x = 1.32, xend = 1.32, y = 5, yend = 25, colour = "red", size = 1, alpha = 0.75) +
+  theme(plot.title = element_text(size = 28, face = "bold")) +
+  theme(axis.title.y = element_text(size = 22, face = "bold")) +
+  theme(axis.title.x = element_text(size = 22, face = "bold")) +
+  theme(axis.text.x = element_text(size = 20, color = "black")) +
+  theme(axis.text.y = element_text(size = 20, color = "black")) + 
+  theme(legend.text=element_text(size=18),
+        legend.title = element_text(size = 22, face = "bold")) +
+  annotate("segment", x = 1.32, xend = 1.32, y = 5, yend = 25, colour = "red", size = 1.75, alpha = 1) +
   annotate("text",
            x = 1.34,
            y = 0,
-           label = "19.7% Diff", size = 3, fontface = 2) 
+           label = "19.7% Diff", size = 7, fontface = 2) 
 
 for( hour in seq(4, 24, by = 4)){
 print(emmeans(model1.1,  pairwise ~ TX, 
@@ -134,92 +137,92 @@ stats.PCraw <- scratch.data %>%
 ggplot(stats.PCraw, aes(x = Time_Point, fill = TX), show.legend = F) +
   theme_bw() +
   expand_limits(y = 113) +
-  geom_bar(aes(y = means, fill = TX), stat='identity', width = 2, position = position_dodge(width = 3), show.legend = T) +
+  geom_bar(aes(y = means, fill = TX), stat='identity', width = 3, position = position_dodge(width = 3), show.legend = T) +
   scale_fill_viridis(discrete = T) +
   scale_x_continuous(breaks = seq(4, 24, by =4)) +
   scale_y_continuous(breaks = seq(0, 100, by = 10)) +
-  geom_errorbar(data = stats.PCraw, aes(ymin = lwr.err, ymax = upr.err), width = 2, position = position_dodge(width = 3), size = 1, show.legend = F) +
-  geom_point(data = scratch.data, aes(y = scratch.data$Percent_Closed), color = "red", position = position_dodge(width = 3), alpha = 0.25, size = 3, show.legend = F) +
+  geom_errorbar(data = stats.PCraw, aes(ymin = lwr.err, ymax = upr.err), width = 2.1, position = position_dodge(width = 3), size = 1.25, show.legend = F) +
+  geom_point(data = scratch.data, aes(y = scratch.data$Percent_Closed), color = "red", position = position_dodge(width = 3), alpha = 0.25, size = 5, show.legend = F) +
   theme(plot.title = element_text(size = 28, face = "bold")) +
   theme(axis.title.y = element_text(size = 26, face = "bold")) +
   theme(axis.title.x = element_text(size = 26, face = "bold")) +
   theme(axis.text.x = element_text(size = 26, color = "black")) +
   theme(axis.text.y = element_text(size = 26, color = "black")) +
-  geom_segment(aes(x = 2.75, y = 37.75, xend = 4, yend = 37.75), size = 1.15) +
-  geom_text(x = 3.4, y = 38.1, label = "*", size = 6) +
-  geom_segment(aes(x = 2.75, y = 39.8, xend = 4.6, yend = 39.8), size = 1.15) +
-  geom_text(x = 3.7, y = 40.5, label = "*", size = 6) +
-  geom_segment(aes(x = 2.75, y = 42, xend = 5.1, yend = 42), size = 1.15) + ####
-  geom_text(x = 4, y = 42.5, label = "*", size = 6) + ####
-  geom_segment(aes(x = 3.35, y = 44.5, xend = 5.1, yend = 44.5), size = 1.15) +
-  geom_text(x = 4.25, y = 45.05, label = "*", size = 6) +
-  geom_segment(aes(x = 3.35, y = 46.7, xend = 4.6, yend = 46.7), size = 1.15) +
-  geom_text(x = 4, y = 47, label = "*", size = 6) +
-  geom_segment(aes(x = 3.35, y = 48.7, xend = 4, yend = 48.7), size = 1.15) +
-  geom_text(x = 3.7, y = 49, label = "*", size = 6) +
-  geom_segment(aes(x = 6.75, y = 62.85, xend = 8, yend = 62.85), size = 1.15) +
-  geom_text(x = 7.4, y = 63.2, label = "*", size = 6) +
-  geom_segment(aes(x = 6.75, y = 64.8, xend = 8.6, yend = 64.8), size = 1.15) +
-  geom_text(x = 7.7, y = 65.45, label = "*", size = 6) +
-  geom_segment(aes(x = 6.75, y = 67, xend = 9.1, yend = 67), size = 1.15) + ####
-  geom_text(x = 8, y = 67.75, label = "*", size = 6) + ####
-  geom_segment(aes(x = 7.35, y = 69.5, xend = 9.1, yend = 69.5), size = 1.15) +
-  geom_text(x = 8.25, y = 70, label = "*", size = 6) +
-  geom_segment(aes(x = 7.35, y = 71.7, xend = 8.6, yend = 71.7), size = 1.15) +
-  geom_text(x = 8, y = 72, label = "*", size = 6) +
-  geom_segment(aes(x = 7.35, y = 73.7, xend = 8, yend = 73.7), size = 1.15) +
-  geom_text(x = 7.7, y = 74, label = "*", size = 6) +
-  geom_segment(aes(x = 10.75, y = 83, xend = 12, yend = 83), size = 1.15) +
-  geom_text(x = 11.4, y = 83.35, label = "*", size = 6) +
-  geom_segment(aes(x = 10.75, y = 85.05, xend = 12.6, yend = 85.05), size = 1.15) +
-  geom_text(x = 11.7, y = 85.5, label = "*", size = 6) +
-  geom_segment(aes(x = 10.75, y = 87.25, xend = 13, yend = 87.25), size = 1.15) + ####
-  geom_text(x = 11.85, y = 87.45, label = "*", size = 6) +
-  geom_segment(aes(x = 11.35, y = 89.75, xend = 13, yend = 89.75), size = 1.15) +
-  geom_text(x = 12.15, y = 90.3, label = "*", size = 6) +
-  geom_segment(aes(x = 11.35, y = 91.75, xend = 12.5, yend = 91.75), size = 1.15) +
-  geom_text(x = 11.9, y = 92, label = "*", size = 6) +
-  geom_segment(aes(x = 11.35, y = 93.75, xend = 11.9, yend = 93.75), size = 1.15) +
-  geom_text(x = 11.65, y = 94, label = "*", size = 6) +
-  geom_segment(aes(x = 14.75, y = 95, xend = 16, yend = 95), size = 1.15) +
-  geom_text(x = 15.4, y = 95.35, label = "*", size = 6) +
-  geom_segment(aes(x = 14.75, y = 97.1, xend = 16.6, yend = 97.1), size = 1.15) +
-  geom_text(x = 15.7, y = 97.6, label = "*", size = 6) +
-  geom_segment(aes(x = 14.75, y = 99.3, xend = 17.2, yend = 99.3), size = 1.15) + ####
-  geom_text(x = 16, y = 99.8, label = "*", size = 6) + 
-  geom_segment(aes(x = 15.35, y = 101.5, xend = 17.2, yend = 101.5), size = 1.15) +
-  geom_text(x = 16.25, y = 102, label = "*", size = 6) +
-  geom_segment(aes(x = 15.35, y = 103.75, xend = 16.6, yend = 103.75), size = 1.15) +
-  geom_text(x = 16, y = 104.2, label = "*", size = 6) +
-  geom_segment(aes(x = 15.35, y = 106.5, xend = 16, yend = 106.5), size = 1.15) +
-  geom_text(x = 15.7, y = 107.5, label = "*", size = 6) +
-  geom_segment(aes(x = 18.75, y = 100, xend = 20, yend = 100), size = 1.15) + ###
-  geom_text(x = 19.4, y = 100.5, label = "*", size = 6) +
-  geom_segment(aes(x = 18.75, y = 102.5, xend = 20.6, yend = 102.5), size = 1.15) +
-  geom_text(x = 19.7, y = 103, label = "*", size = 6) +
-  geom_segment(aes(x = 18.75, y = 105.25, xend = 21.2, yend = 105.25), size = 1.15) + ####
-  geom_text(x = 20, y = 105.75, label = "*", size = 6) +
-  geom_segment(aes(x = 19.35, y = 107.75, xend = 21.2, yend = 107.75), size = 1.15) +
-  geom_text(x = 20.25, y = 108.25, label = "*", size = 6) +
-  geom_segment(aes(x = 19.35, y = 110.25, xend = 20.6, yend = 110.25), size = 1.15) +
-  geom_text(x = 20, y = 110.75, label = "*", size = 6) +
-  geom_segment(aes(x = 19.35, y = 112.75, xend = 20, yend = 112.75), size = 1.15) +
-  geom_text(x = 19.7, y = 113.25, label = "*", size = 6) +
-  geom_segment(aes(x = 22.75, y = 100, xend = 24, yend = 100), size = 1.15) + ###
-  geom_text(x = 23.4, y = 100.5, label = "*", size = 6) +
-  geom_segment(aes(x = 22.75, y = 102.5, xend = 24.6, yend = 102.5), size = 1.15) +
-  geom_text(x = 23.7, y = 103, label = "*", size = 6) +
-  geom_segment(aes(x = 22.75, y = 105.25, xend = 25.2, yend = 105.25), size = 1.15) + ####
-  geom_text(x = 24, y = 105.75, label = "*", size = 6) +
-  geom_segment(aes(x = 23.35, y = 107.75, xend = 25.2, yend = 107.75), size = 1.15) +
-  geom_text(x = 24.25, y = 108.25, label = "*", size = 6) +
-  geom_segment(aes(x = 23.35, y = 110.25, xend = 24.6, yend = 110.25), size = 1.15) +
-  geom_text(x = 24, y = 110.75, label = "*", size = 6) +
-  geom_segment(aes(x = 23.35, y = 112.75, xend = 24, yend = 112.75), size = 1.15) +
-  geom_text(x = 23.7, y = 113.25, label = "*", size = 6) +
+  geom_segment(aes(x = 2.75, y = 37.75, xend = 4, yend = 37.75), size = 2) +
+  geom_text(x = 3.4, y = 38.1, label = "*", size = 10) +
+  geom_segment(aes(x = 2.75, y = 39.8, xend = 4.6, yend = 39.8), size = 2) +
+  geom_text(x = 3.7, y = 40.5, label = "*", size = 10) +
+  geom_segment(aes(x = 2.75, y = 42, xend = 5.1, yend = 42), size = 2) + ####
+  geom_text(x = 4, y = 42.5, label = "*", size = 10) +                       ####
+  geom_segment(aes(x = 3.35, y = 44.5, xend = 5.1, yend = 44.5), size = 2) +
+  geom_text(x = 4.25, y = 45.05, label = "*", size = 10) +
+  geom_segment(aes(x = 3.35, y = 46.7, xend = 4.6, yend = 46.7), size = 2) +
+  geom_text(x = 4, y = 47, label = "*", size = 10) +
+  geom_segment(aes(x = 3.35, y = 48.7, xend = 4, yend = 48.7), size = 2) +
+  geom_text(x = 3.7, y = 49, label = "*", size = 10) +
+  geom_segment(aes(x = 6.75, y = 62.85, xend = 8, yend = 62.85), size = 2) +
+  geom_text(x = 7.4, y = 63.2, label = "*", size = 10) +
+  geom_segment(aes(x = 6.75, y = 64.8, xend = 8.6, yend = 64.8), size = 2) +
+  geom_text(x = 7.7, y = 65.45, label = "*", size = 10) +
+  geom_segment(aes(x = 6.75, y = 67, xend = 9.1, yend = 67), size = 2) + ####
+  geom_text(x = 8, y = 67.75, label = "*", size = 10) + ####
+  geom_segment(aes(x = 7.35, y = 69.5, xend = 9.1, yend = 69.5), size = 2) +
+  geom_text(x = 8.25, y = 70, label = "*", size = 10) +
+  geom_segment(aes(x = 7.35, y = 71.7, xend = 8.6, yend = 71.7), size = 2) +
+  geom_text(x = 8, y = 72, label = "*", size = 10) +
+  geom_segment(aes(x = 7.35, y = 73.7, xend = 8, yend = 73.7), size = 2) +
+  geom_text(x = 7.7, y = 74, label = "*", size = 10) +
+  geom_segment(aes(x = 10.75, y = 83, xend = 12, yend = 83), size = 2) +
+  geom_text(x = 11.4, y = 83.35, label = "*", size = 10) +
+  geom_segment(aes(x = 10.75, y = 85.05, xend = 12.6, yend = 85.05), size = 2) +
+  geom_text(x = 11.7, y = 85.5, label = "*", size = 10) +
+  geom_segment(aes(x = 10.75, y = 87.25, xend = 13.25, yend = 87.25), size = 2) + ####
+  geom_text(x = 11.85, y = 87.45, label = "*", size = 10) +
+  geom_segment(aes(x = 11.35, y = 89.75, xend = 13.25, yend = 89.75), size = 2) +
+  geom_text(x = 12.15, y = 90.3, label = "*", size = 10) +
+  geom_segment(aes(x = 11.35, y = 91.75, xend = 12.5, yend = 91.75), size = 2) +
+  geom_text(x = 11.9, y = 92, label = "*", size = 10) +
+  geom_segment(aes(x = 11.35, y = 93.75, xend = 11.9, yend = 93.75), size = 2) +
+  geom_text(x = 11.65, y = 94, label = "*", size = 10) +
+  geom_segment(aes(x = 14.75, y = 95, xend = 16, yend = 95), size = 2) +
+  geom_text(x = 15.4, y = 95.35, label = "*", size = 10) +
+  geom_segment(aes(x = 14.75, y = 97.1, xend = 16.6, yend = 97.1), size = 2) +
+  geom_text(x = 15.7, y = 97.6, label = "*", size = 10) +
+  geom_segment(aes(x = 14.75, y = 99.3, xend = 17.2, yend = 99.3), size = 2) + ####
+  geom_text(x = 16, y = 99.8, label = "*", size = 10) + 
+  geom_segment(aes(x = 15.35, y = 101.5, xend = 17.2, yend = 101.5), size = 2) +
+  geom_text(x = 16.25, y = 102, label = "*", size = 10) +
+  geom_segment(aes(x = 15.35, y = 103.75, xend = 16.6, yend = 103.75), size = 2) +
+  geom_text(x = 16, y = 104.2, label = "*", size = 10) +
+  geom_segment(aes(x = 15.35, y = 106.5, xend = 16, yend = 106.5), size = 2) +
+  geom_text(x = 15.7, y = 107.5, label = "*", size = 10) +
+  geom_segment(aes(x = 18.75, y = 100, xend = 20, yend = 100), size = 2) + ###
+  geom_text(x = 19.4, y = 100.5, label = "*", size = 10) +
+  geom_segment(aes(x = 18.75, y = 102.5, xend = 20.6, yend = 102.5), size = 2) +
+  geom_text(x = 19.7, y = 103, label = "*", size = 10) +
+  geom_segment(aes(x = 18.75, y = 105.25, xend = 21.2, yend = 105.25), size = 2) + ####
+  geom_text(x = 20, y = 105.75, label = "*", size = 10) +
+  geom_segment(aes(x = 19.35, y = 107.75, xend = 21.2, yend = 107.75), size = 2) +
+  geom_text(x = 20.25, y = 108.25, label = "*", size = 10) +
+  geom_segment(aes(x = 19.35, y = 110.25, xend = 20.6, yend = 110.25), size = 2) +
+  geom_text(x = 20, y = 110.75, label = "*", size = 10) +
+  geom_segment(aes(x = 19.35, y = 112.75, xend = 20, yend = 112.75), size = 2) +
+  geom_text(x = 19.7, y = 113.25, label = "*", size = 10) +
+  geom_segment(aes(x = 22.75, y = 100, xend = 24, yend = 100), size = 2) + ###
+  geom_text(x = 23.4, y = 100.5, label = "*", size = 10) +
+  geom_segment(aes(x = 22.75, y = 102.5, xend = 24.6, yend = 102.5), size = 2) +
+  geom_text(x = 23.7, y = 103, label = "*", size = 10) +
+  geom_segment(aes(x = 22.75, y = 105.25, xend = 25.2, yend = 105.25), size = 2) + ####
+  geom_text(x = 24, y = 105.75, label = "*", size = 10) +
+  geom_segment(aes(x = 23.35, y = 107.75, xend = 25.2, yend = 107.75), size = 2) +
+  geom_text(x = 24.25, y = 108.25, label = "*", size = 10) +
+  geom_segment(aes(x = 23.35, y = 110.25, xend = 24.6, yend = 110.25), size = 2) +
+  geom_text(x = 24, y = 110.75, label = "*", size = 10) +
+  geom_segment(aes(x = 23.35, y = 112.75, xend = 24, yend = 112.75), size = 2) +
+  geom_text(x = 23.7, y = 113.25, label = "*", size = 10) +
   theme(legend.text=element_text(size=18),
         legend.title = element_text(size = 24, face = "bold")) +
-  labs(title = "Delayed Percent Closure In 24 Hour Scratch Assay",
+  labs(title = "A) Delayed Percent Closure In 24 Hour Scratch Assay",
        y = "Closure (%)",
        x = "Hours Post Scratch")
   
@@ -231,12 +234,11 @@ anova(mPCraw)
 m2PCraw <- lmer(Percent_Closed ~ TX*Time_Point + (1|Plate), data = scratch.dataraw)
 anova(mPCraw, m2PCraw) #additive multi-way ANOVA is favored p = 0.09112
 summary(mPCraw)
-
 #its an additive model, contrasts at all timepoints will be the same
 #but for the sake of consistancy I have included each hour below
 emmeans(mPCraw, pairwise~ TX + Time_Point, at = list(Time_Point = '4'))$contrasts
-emmeans(mPCraw, pairwise~ tx + hour, at = list(Time_Point = '8'))$contrasts
-emmeans(mPCraw, pairwise~ tx + hour, at = list(Time_Point = '12'))$contrasts
-emmeans(mPCraw, pairwise~ tx + hour, at = list(Time_Point = '16'))$contrasts
-emmeans(mPCraw, pairwise~ tx + hour, at = list(Time_Point = '20'))$contrasts
+emmeans(mPCraw, pairwise~ TX + Time_Point, at = list(Time_Point = '8'))$contrasts
+emmeans(mPCraw, pairwise~ TX + Time_Point, at = list(Time_Point = '12'))$contrasts
+emmeans(mPCraw, pairwise~ TX + Time_Point, at = list(Time_Point = '16'))$contrasts
+emmeans(mPCraw, pairwise~ TX + Time_Point, at = list(Time_Point = '20'))$contrasts
 emmeans(mPCraw, pairwise~ TX + Time_Point, at = list(Time_Point = '24'))$contrasts
