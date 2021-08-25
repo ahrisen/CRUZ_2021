@@ -61,7 +61,7 @@ ggplot(stats.GC, aes(x = log(hour), shape = tx), show.legend = F) +
   geom_errorbar(data = stats.GC, aes(ymin = lwr.err, ymax = upr.err), width = 0.2, position = position_dodge(width = 0.1), size = 1, show.legend = F) +
   scale_y_continuous(breaks = seq(8, 12, by = .5)) +
   scale_x_continuous(breaks = seq(log(24), log(144), length=6)) +
-  labs(title = "Modeling of Cell Population Decrease") +
+  labs(title = "B) Modeling of Cell Population Decrease") +
   labs(y = "Ln(Cell Estimate)") +
   labs(x = "Ln(Hours of Growth)") +
   theme(plot.title = element_text(size = 28, face = "bold")) +
@@ -93,10 +93,10 @@ stats.GCraw <- GC.data %>%
 
 ggplot(stats.GCraw, aes(x = hour, fill = tx), show.legend = F) +
   theme_bw() +
-  geom_bar(aes(y = means, fill = tx), stat='identity', width = 12, position = position_dodge(width = 15), show.legend = T) +
+  geom_bar(aes(y = means, fill = tx), stat='identity', width = 20, position = position_dodge(width = 20), show.legend = T) +
   scale_fill_viridis(discrete = T) +
-  geom_point(data = GC.data, aes(y = GC.data$estimate), color = "red", position = position_dodge(width = 15), alpha = 0.25, show.legend = F) +
-  geom_errorbar(data = stats.GCraw, aes(ymin = lwr.err, ymax = upr.err), width = 7, position = position_dodge(width = 15), size = 0.5, show.legend = F) +
+  geom_point(data = GC.data, aes(y = GC.data$estimate), color = "red", position = position_dodge(width = 20), alpha = 0.25, size = 5, show.legend = F) +
+  geom_errorbar(data = stats.GCraw, aes(ymin = lwr.err, ymax = upr.err), width = 7, position = position_dodge(width = 20), size = 1.75, show.legend = F) +
   scale_y_continuous(breaks = seq(5000, 500000, by = 15000)) +
   scale_x_continuous(breaks = seq(24, 144, by = 24)) +
   theme(plot.title = element_text(size = 28, face = "bold")) +
@@ -104,39 +104,39 @@ ggplot(stats.GCraw, aes(x = hour, fill = tx), show.legend = F) +
   theme(axis.title.x = element_text(size = 26, face = "bold")) +
   theme(axis.text.x = element_text(size = 26, color = "black")) +
   theme(axis.text.y = element_text(size = 26, color = "black")) +
-  geom_text(x = 24, y = 20000, label = "N.S.") +
-  geom_text(x = 48, y = 35000, label = "N.S.") +
-  geom_segment(aes(x = 65, y = 56000, xend = 79, yend = 56000), size = 1) +
-  geom_text(x = 72, y = 56750, label = "*", size = 5) +
-  geom_segment(aes(x = 89, y = 95000, xend = 103, yend = 95000), size = 1) +
-  geom_text(x = 96, y = 97000, label = "*", size = 5) +
-  geom_segment(aes(x = 96, y = 100500, xend = 103, yend = 100500), size = 1) +
-  geom_text(x = 99.5, y = 101600, label = "*", size = 5) +
-  geom_segment(aes(x = 99, y = 105500, xend = 103, yend = 105500), size = 1) +
-  geom_text(x = 101, y = 107500, label = "*", size = 5) +
-  geom_segment(aes(x = 113, y = 133000, xend = 127, yend = 133000), size = 1) +
-  geom_text(x = 120, y = 134500, label = "*", size = 5) +
-  geom_segment(aes(x = 117, y = 138000, xend = 127, yend = 138000), size = 1) +
-  geom_text(x = 122, y = 139500, label = "*", size = 5) +
-  geom_segment(aes(x = 120, y = 143000, xend = 127, yend = 143000), size = 1) +
-  geom_text(x = 123.5, y = 144500, label = "*", size = 5) +
-  geom_segment(aes(x = 123, y = 148000, xend = 127, yend = 148000), size = 1) +
-  geom_text(x = 125, y = 149500, label = "*", size = 5) +
-  geom_segment(aes(x = 137, y = 150000, xend = 151, yend = 150000), size = 1) +
-  geom_text(x = 144, y = 151500, label = "*", size = 5) +
-  geom_segment(aes(x = 137, y = 155000, xend = 148, yend = 155000), size = 1) +
-  geom_text(x = 142.5, y = 156500, label = "*", size = 5) +
-  geom_segment(aes(x = 137, y = 160000, xend = 145, yend = 160000), size = 1) +
-  geom_text(x = 141, y = 161500, label = "*", size = 5) +
-  geom_segment(aes(x = 137, y = 165000, xend = 141, yend = 165000), size = 1) +
-  geom_text(x = 139, y = 166500, label = "*", size = 5) +
-  geom_segment(aes(x = 144, y = 170000, xend = 147, yend = 170000), size = 1) +
-  geom_text(x = 145.5, y = 171000, label = "*", size = 5) +
-  geom_segment(aes(x = 144, y = 175000, xend = 151, yend = 175000), size = 1) +
-  geom_text(x = 147.5, y = 176000, label = "*", size = 5) +
+  geom_text(x = 24, y = 20000, label = "N.S.", size = 8) +
+  geom_text(x = 48, y = 35000, label = "N.S.", size = 8) +
+  geom_segment(aes(x = 64, y = 56000, xend = 80, yend = 56000), size = 2) + ###
+  geom_text(x = 72, y = 56750, label = "*", size = 10) +                    ###
+  geom_segment(aes(x = 88, y = 95000, xend = 104, yend = 95000), size = 2) +
+  geom_text(x = 96, y = 96500, label = "*", size = 10) +
+  geom_segment(aes(x = 96, y = 100500, xend = 104, yend = 100500), size = 2) +
+  geom_text(x = 100, y = 101600, label = "*", size = 10) +
+  geom_segment(aes(x = 100, y = 105500, xend = 104, yend = 105500), size = 2) + ###
+  geom_text(x = 102, y = 107500, label = "*", size = 10) +                     ###
+  geom_segment(aes(x = 112, y = 133000, xend = 128, yend = 133000), size = 2) +
+  geom_text(x = 120, y = 134500, label = "*", size = 10) +
+  geom_segment(aes(x = 116, y = 138000, xend = 128, yend = 138000), size = 2) +
+  geom_text(x = 122, y = 139500, label = "*", size = 10) +
+  geom_segment(aes(x = 120, y = 143000, xend = 128, yend = 143000), size = 2) +
+  geom_text(x = 124.5, y = 144500, label = "*", size = 10) +
+  geom_segment(aes(x = 124, y = 148000, xend = 128, yend = 148000), size = 2) + ###
+  geom_text(x = 126, y = 149500, label = "*", size = 10) +                      ###
+  geom_segment(aes(x = 136, y = 150000, xend = 152, yend = 150000), size = 2) +
+  geom_text(x = 144, y = 151500, label = "*", size = 10) +
+  geom_segment(aes(x = 136, y = 155000, xend = 149, yend = 155000), size = 2) +
+  geom_text(x = 142.5, y = 156500, label = "*", size = 10) +
+  geom_segment(aes(x = 136, y = 160000, xend = 144, yend = 160000), size = 2) +
+  geom_text(x = 141, y = 161500, label = "*", size = 10) +
+  geom_segment(aes(x = 136, y = 165000, xend = 140, yend = 165000), size = 2) +
+  geom_text(x = 138, y = 166500, label = "*", size = 10) +
+  geom_segment(aes(x = 144, y = 170000, xend = 148, yend = 170000), size = 2) +
+  geom_text(x = 145.5, y = 171000, label = "*", size = 10) +
+  geom_segment(aes(x = 144, y = 175000, xend = 152, yend = 175000), size = 2) + ###
+  geom_text(x = 147.5, y = 176000, label = "*", size = 10) + ###
   theme(legend.text=element_text(size=18),
         legend.title = element_text(size = 24, face = "bold")) +
-  labs(title = "Decreased Cell Population Over 144 Hours",
+  labs(title = "A) Decreased Cell Population Over 144 Hours",
        y = "Cell Estimate",
        x = "Hour")
   
@@ -145,9 +145,10 @@ GC.dataraw <- GC.data
 GC.dataraw$hour <- factor(GC.dataraw$hour)
 anova.model1 <- lm(estimate ~ tx+hour, data = GC.dataraw)
 anova(anova.model1)
-Boanova.model <- lm(estimate ~ tx*hour, data = GC.dataraw)
+anova.model <- lm(estimate ~ tx*hour, data = GC.dataraw)
 anova(anova.model1, anova.model)
 summary(anova.model)
+confint(anova.model)
 plot(anova.model, which = c(1,2))
 
 emmeans(anova.model, pairwise~ tx * hour, at = list(hour = '24'))$contrasts
@@ -226,7 +227,7 @@ ggplot(stats.pdl, aes(x = hour, shape = tx), show.legend = F) +
   geom_errorbar(data = stats.pdl, aes(ymin = lwr.err, ymax = upr.err), width = 7, position = position_dodge(width = 7), size = 1.5, show.legend = F) +
   scale_y_continuous(breaks = seq(0, 6, by = 0.5)) +
   scale_x_continuous(breaks = seq(24, 144, by = 24)) +
-  labs(title = "Population Doublings of hDFn Exposed to UN") +
+  labs(title = "B) Modeling of Population Doublings") +
   labs(y = "Number of Population Doublings (PD)") +
   labs(x = "Hours of Growth") +
   theme(plot.title = element_text(size = 28, face = "bold")) +
@@ -268,10 +269,10 @@ stats.PDraw <- PD.raw %>%
 
 ggplot(stats.PDraw, aes(x = hour, fill = tx), show.legend = F) +
   theme_bw() +
-  geom_bar(aes(y = means, fill = tx), stat='identity', width = 12, position = position_dodge(width = 15), show.legend = T) +
+  geom_bar(aes(y = means, fill = tx), stat='identity', width = 20, position = position_dodge(width = 20), show.legend = T) +
   scale_fill_viridis(discrete = T) +
-  geom_point(data = GC.data.PDL, aes(y = GC.data.PDL$PDL), color = "red", position = position_dodge(width = 15), alpha = 0.25, show.legend = F) +
-  geom_errorbar(data = stats.PDraw, aes(ymin = lwr.err, ymax = upr.err), width = 7, position = position_dodge(width = 15), size = 0.5, show.legend = F) +
+  geom_point(data = GC.data.PDL, aes(y = GC.data.PDL$PDL), color = "red", position = position_dodge(width = 20), size = 5, alpha = 0.25, show.legend = F) +
+  geom_errorbar(data = stats.PDraw, aes(ymin = lwr.err, ymax = upr.err), width = 7, position = position_dodge(width = 20), size = 1.75, show.legend = F) +
   scale_y_continuous(breaks = seq(-1, 5, by = 1)) +
   scale_x_continuous(breaks = seq(24, 144, by = 24)) +
   theme(plot.title = element_text(size = 28, face = "bold")) +
@@ -279,45 +280,46 @@ ggplot(stats.PDraw, aes(x = hour, fill = tx), show.legend = F) +
   theme(axis.title.x = element_text(size = 26, face = "bold")) +
   theme(axis.text.x = element_text(size = 26, color = "black")) +
   theme(axis.text.y = element_text(size = 26, color = "black")) +
-  geom_text(x = 24, y = 1.25, label = "N.S.") +
-  geom_segment(aes(x = 42, y = 2, xend = 48, yend = 2), size = 1) +
-  geom_text(x = 45, y = 2.025, label = "*", size = 5) +
-  geom_segment(aes(x = 45, y = 2.15, xend = 51, yend = 2.15), size = 1) +
-  geom_text(x = 48, y = 2.2, label = "*", size = 5) +
-  geom_segment(aes(x = 45, y = 2.3, xend = 54, yend = 2.3), size = 1) +
-  geom_text(x = 49.5, y = 2.35, label = "*", size = 5) +
-  geom_segment(aes(x = 48, y = 2.45, xend = 54, yend = 2.45), size = 1) +
-  geom_text(x = 51, y = 2.5, label = "*", size = 5) +
-  geom_segment(aes(x = 48, y = 2.6, xend = 51, yend = 2.6), size = 1) +
-  geom_text(x = 49.65, y = 2.65, label = "*", size = 5) +
-  geom_segment(aes(x = 66, y = 3.5, xend = 78, yend = 3.5), size = 1) +
-  geom_text(x = 72, y = 3.55, label = "*", size = 5) +
-  geom_segment(aes(x = 66, y = 3.65, xend = 75, yend = 3.65), size = 1) +
-  geom_text(x = 70.5, y = 3.7, label = "*", size = 5) +
-  geom_segment(aes(x = 66, y = 3.8, xend = 72, yend = 3.8), size = 1) +
-  geom_text(x = 69, y = 3.85, label = "*", size = 5) +
-  geom_segment(aes(x = 69, y = 3.95, xend = 78, yend = 3.95), size = 1) +
-  geom_text(x = 73.5, y = 3.975, label = "*", size = 5) +
-  geom_segment(aes(x = 69, y = 4.1, xend = 75, yend = 4.1), size = 1) +
-  geom_text(x = 72, y = 4.15, label = "*", size = 5) +
-  geom_segment(aes(x = 69, y = 4.25, xend = 72, yend = 4.25), size = 1) +
-  geom_text(x = 70.5, y = 4.3, label = "*", size = 5) +
-  geom_segment(aes(x = 90, y = 4.5, xend = 102, yend = 4.5), size = 1) +
-  geom_text(x = 96, y = 4.55, label = "*", size = 5) +
-  geom_segment(aes(x = 96, y = 4.65, xend = 102, yend = 4.65), size = 1) +
-  geom_text(x = 99, y = 4.7, label = "*", size = 5) +
-  geom_segment(aes(x = 99, y = 4.8, xend = 102, yend = 4.8), size = 1) +
-  geom_text(x = 100.5, y = 4.85, label = "*", size = 5) +
-  geom_segment(aes(x = 114, y = 4.8, xend = 126, yend = 4.8), size = 1) +
-  geom_text(x = 120, y = 4.85, label = "*", size = 5) +
-  geom_segment(aes(x = 117, y = 4.95, xend = 126, yend = 4.95), size = 1) +
-  geom_text(x = 121.5, y = 5, label = "*", size = 5) +
-  geom_segment(aes(x = 120, y = 5.1, xend = 126, yend = 5.1), size = 1) +
-  geom_text(x = 123, y = 5.15, label = "*", size = 5) +
-  geom_segment(aes(x = 123, y = 5.25, xend = 126, yend = 5.25), size = 1) +
-  geom_text(x = 124.5, y = 5.3, label = "*", size = 5) +
-  geom_segment(aes(x = 138, y = 5, xend = 150, yend = 5), size = 1) +
-  geom_text(x = 144, y = 5.1, label = "*", size = 5) +
+  geom_text(x = 24, y = 1.25, label = "N.S.", size = 8) +
+  geom_segment(aes(x = 40, y = 2, xend = 48, yend = 2), size = 2) +
+  geom_text(x = 44, y = 2.025, label = "*", size = 10) +
+  geom_segment(aes(x = 44, y = 2.15, xend = 52, yend = 2.15), size = 2) +
+  geom_text(x = 48, y = 2.2, label = "*", size = 10) +
+  geom_segment(aes(x = 44, y = 2.3, xend = 55, yend = 2.3), size = 2) +
+  geom_text(x = 49.5, y = 2.35, label = "*", size = 10) +
+  geom_segment(aes(x = 48, y = 2.45, xend = 55, yend = 2.45), size = 2) +
+  geom_text(x = 51, y = 2.5, label = "*", size = 10) +
+  geom_segment(aes(x = 48, y = 2.6, xend = 52, yend = 2.6), size = 2) + ###
+  geom_text(x = 49.65, y = 2.65, label = "*", size = 10) +              ###
+  geom_segment(aes(x = 64, y = 3.5, xend = 80, yend = 3.5), size = 2) +
+  geom_text(x = 71, y = 3.55, label = "*", size = 10) +
+  geom_segment(aes(x = 64, y = 3.65, xend = 76, yend = 3.65), size = 2) +
+  geom_text(x = 69.5, y = 3.7, label = "*", size = 10) +
+  geom_segment(aes(x = 64, y = 3.8, xend = 72, yend = 3.8), size = 2) +
+  geom_text(x = 68, y = 3.85, label = "*", size = 10) +
+  geom_segment(aes(x = 68, y = 3.95, xend = 79, yend = 3.95), size = 2) +
+  geom_text(x = 73.5, y = 3.975, label = "*", size = 10) +
+  geom_segment(aes(x = 68, y = 4.1, xend = 76, yend = 4.1), size = 2) +
+  geom_text(x = 72, y = 4.15, label = "*", size = 10) +
+  geom_segment(aes(x = 68, y = 4.25, xend = 72, yend = 4.25), size = 2) + ###
+  geom_text(x = 70.5, y = 4.3, label = "*", size = 10) +                  ###
+  geom_segment(aes(x = 88, y = 4.5, xend = 104, yend = 4.5), size = 2) +
+  geom_text(x = 96, y = 4.525, label = "*", size = 10) +
+  geom_segment(aes(x = 92, y = 4.65, xend = 104, yend = 4.65), size = 2) +
+  geom_text(x = 99, y = 4.7, label = "*", size = 10) +
+  geom_segment(aes(x = 100, y = 4.95, xend = 104, yend = 4.95), size = 2) +#
+  geom_text(x = 102.5, y = 5, label = "*", size = 10) +
+  geom_segment(aes(x = 96, y = 4.8, xend = 104, yend = 4.8), size = 2) + ###
+  geom_text(x = 100.5, y = 4.85, label = "*", size = 10) +               ###
+  geom_segment(aes(x = 112, y = 4.8, xend = 128, yend = 4.8), size = 2) +
+  geom_text(x = 120, y = 4.85, label = "*", size = 10) +
+  geom_segment(aes(x = 116, y = 4.95, xend = 128, yend = 4.95), size = 2) +
+  geom_text(x = 122.5, y = 5, label = "*", size = 10) +
+  geom_segment(aes(x = 120, y = 5.1, xend = 128, yend = 5.1), size = 2) +
+  geom_text(x = 124, y = 5.15, label = "*", size = 10) +
+  geom_segment(aes(x = 122, y = 5.25, xend = 128, yend = 5.25), size = 2) + ###
+  geom_text(x = 125.5, y = 5.3, label = "*", size = 10) +                   ###
+  geom_text(x = 144, y = 5, label = "N.S.", size = 8) +
   theme(plot.title = element_text(size = 28, face = "bold")) +
   theme(axis.title.y = element_text(size = 26, face = "bold")) +
   theme(axis.title.x = element_text(size = 26, face = "bold")) +
@@ -325,7 +327,7 @@ ggplot(stats.PDraw, aes(x = hour, fill = tx), show.legend = F) +
   theme(axis.text.y = element_text(size = 26, color = "black")) +
   theme(legend.text=element_text(size=18),
         legend.title = element_text(size = 24, face = "bold")) +
-  labs(title = "Decreased Population Doubling Over 144 Hours",
+  labs(title = "A) Decreased Population Doubling Over 144 Hours",
        y = "Population Doublings",
        x = "Hour")
 
@@ -336,6 +338,7 @@ model.pdraw2 <- lm(PDL ~ tx*hour, data = PD.raw)
 anova(model.pdraw, model.pdraw2) 
 plot(model.pdraw2)
 summary(model.pdraw2)
+confint(model.pdraw2)
 
 emmeans(model.pdraw2, pairwise~ tx * hour, at = list(hour = '24'))$contrasts
 emmeans(model.pdraw2, pairwise~ tx * hour, at = list(hour = '48'))$contrasts
